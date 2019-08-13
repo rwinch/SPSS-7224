@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.annotation.Repeat;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -26,9 +25,10 @@ public class ControllerTest {
     @Autowired
     protected WebApplicationContext wac;
 
-    @Test//Repeat(10)
+    @Test
+    @Repeat(10)
     public void test() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(wac).apply(SecurityMockMvcConfigurers.springSecurity()).build();
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilters(new HeaderFilter()).build();
         MvcResult result = mockMvc.perform(get("/test"))
                 .andExpect(request().asyncStarted()).andReturn();
         mockMvc.perform(asyncDispatch(result)).andExpect(status().isOk());
